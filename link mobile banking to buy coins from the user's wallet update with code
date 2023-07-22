@@ -1,0 +1,24 @@
+// server.js
+const express = require('express');
+const bodyParser = require('body-parser');
+const app = express();
+const paymentGateway = require('./paymentGateway'); // Your payment gateway integration module
+
+app.use(bodyParser.json());
+
+// API endpoint to initiate a coin purchase
+app.post('/api/buyCoins', async (req, res) => {
+  try {
+    const { userId, amount } = req.body; // Get user ID and purchase amount from the request
+    const paymentResult = await paymentGateway.makePayment(userId, amount);
+    // Update user's wallet balance and return the result
+    // (Remember to handle errors and confirmations appropriately)
+    res.json({ success: true, message: 'Payment successful', paymentResult });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Payment failed', error });
+  }
+});
+
+app.listen(3000, () => {
+  console.log('Server is running on http://localhost:3000');
+});
